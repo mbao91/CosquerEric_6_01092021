@@ -2,25 +2,19 @@ const Thing = require('../models/Things');
 const fs = require('fs');
 
 exports.createThing = (req, res, next) => { //Création de l'objet
-    const thingObject = JSON.parse(req.body.thing);
+    console.log('on entre dans la fo,nction create');
+    const thingObject = JSON.parse(req.body.sauce);
+    thingObject.dislikes = 0;
+    thingObject.likes = 1;
+    thingObject.usersLiked = [];
+    thingObject.usersDisliked = [];
+    console.log('voici lobjet req.body.sauce', thingObject);
     delete thingObject._id;
-    console.log(req.body);
     const thing = new Thing({
         ...thingObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
-    thing.save()
-    .then((thing) => res.status(201).json({ thing }))
-    .catch(error => res.status(400).json({ error }));
-};
-
-exports.createThing = (req, res, next) => { //Création des Like/Dislike
-    delete req.body._id;
-    console.log(req.body);
-    const thing = new Thing({
-        userId: String,
-        like: Number
-    });
+    console.log('on save');
     thing.save()
     .then((thing) => res.status(201).json({ thing }))
     .catch(error => res.status(400).json({ error }));

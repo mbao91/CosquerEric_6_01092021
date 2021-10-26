@@ -11,7 +11,7 @@ const thingsSchema = mongoose.Schema({
     likes: { type: Number, required: true },
     dislikes: { type: Number, required: true },
     usersLiked: { type: Array, required: true },
-    usersDisliked: { type: ["String<userId>"], required: true },
+    usersDisliked: { type: Array, required: true },
 });
 
 module.exports = mongoose.model('Things', thingsSchema);
