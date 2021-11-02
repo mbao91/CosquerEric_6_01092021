@@ -18,4 +18,3 @@ router.put('/:id', auth, multer, saucesCtrl.modifyThing);
 router.delete('/:id', auth, saucesCtrl.deleteThing);
 
 module.exports = router;
-

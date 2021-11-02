@@ -22,9 +22,9 @@ exports.createThing = (req, res, next) => { //Création de l'objet
 
 exports.getAllSauces = (req, res, next) => { /*Renvoie un tableau de
     toutes les sauces de la base de données.*/
-    //console.log('test', res);
+    console.log('test', res);
     Thing.find()
-    .then((things) => res.status(200).json({ things }))
+    .then((things) => res.status(200).json( things ))
     .catch(error => res.status(400).json({ error }));
 };
 
