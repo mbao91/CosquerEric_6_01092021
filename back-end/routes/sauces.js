@@ -7,7 +7,7 @@ const multer = require('../middelware/multer-config');
 
 router.post('/', auth, multer, saucesCtrl.createThing);
 
-router.post('/:id/like', auth, multer, saucesCtrl.createThing);
+router.post('/:id/like', auth, multer, saucesCtrl.likesSauces);
 
 router.get('/', auth, saucesCtrl.getAllSauces);
  

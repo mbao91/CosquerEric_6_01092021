@@ -10,7 +10,7 @@ const thingsSchema = mongoose.Schema({
     heat: { type: Number, required: true },
     likes: { type: Number, required: true },
     dislikes: { type: Number, required: true },
-    usersLiked: { type: ["Sting <userId>"], required: true },
+    usersLiked: { type: Array, required: true },
     usersDisliked: { type: Array, required: true },
 });
 

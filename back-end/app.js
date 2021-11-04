@@ -7,7 +7,7 @@ const helmet = require('helmet');
 const saucesRoute = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 
-mongoose.connect('mongodb+srv://eric1stusr:abcdef91.@cluster0.7gvrz.mongodb.net/test1?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://eric1stusr:Abcdef91@cluster0.7gvrz.mongodb.net/test1?retryWrites=true&w=majority',
 { useNewUrlParser: true,
   useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussi !'))
