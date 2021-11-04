@@ -44,27 +44,27 @@ exports.likesSauces = (req, res, next) => {
 
         case 1 :
             Thing.updateOne(
-            { _id: thingId },
-            { $push: { usersLiked: userId }, $inc: { likes: +1 }})
+            { _id: req.params.id },
+            { $push: { usersLiked: req.body.userId }, $inc: { likes: +1 }})
             .then(() => res.status(200).json({ message: "Vous avez mis un like sur la sauce." }))
             .catch((error) => res.status(400).json({ error }))
         break;
 
         case 0 :
-            Thing.findOne({ _id: thingId }) 
+            Thing.findOne({ _id: req.params.id }) 
             .then((thing) => {
                 if(thing.usersLiked.includes(userId)) {
                     Thing.updateOne(
-                    { _id: thingId },
-                    { $push: { usersLiked: userId }, $inc: { likes: -1 }})
+                    { _id: req.params.id },
+                    { $push: { usersLiked: req.body.userId }, $inc: { likes: -1 }})
                     .then(() => res.status(200).json({ message: "Votre like a été supprimé" }))
                     .catch((error) => res.status(400).json({ error }))
                 }
 
                 if(thing.usersDisliked.includes(userId)) {
                     Thing.updateOne(
-                    { _id: thingId },
-                    { $push: { usersLiked: userId }, $inc: { dislikes: -1 }})
+                    { _id: req.params.id },
+                    { $push: { usersLiked: req.body.userId }, $inc: { dislikes: -1 }})
                     .then(() => res.status(200).json({ message: "Votre dislike a été supprimé" }))
                     .catch((error) => res.status(400).json({ error }))
                 }
@@ -74,8 +74,8 @@ exports.likesSauces = (req, res, next) => {
 
         case -1 :
             Thing.updateOne(
-            { _id: thingId },
-            { $push: { usersLiked: userId }, $inc: { dislikes: -1 }})
+            { _id: req.params.id },
+            { $push: { usersLiked: req.body.userId }, $inc: { dislikes: +1 }})
             .then(() => res.status(200).json({ message: "Vous avez mis un dislike sur la sauce." }))
             .catch((error) => res.status(400).json({ error }))
         break;
@@ -84,7 +84,7 @@ exports.likesSauces = (req, res, next) => {
 
 exports.modifyThing = (req, res, next) => { //Modification de l'objet
     const thingObject = req.file ? {
-        ...JSON.parse(req.body.thing),
+        ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
     Thing.updateOne({ _id: req.params.id },
@@ -94,10 +94,10 @@ exports.modifyThing = (req, res, next) => { //Modification de l'objet
 };
 
 exports.deleteThing = (req, res, next) => { //Suppression d'un objet
-    Thing.deleteOne({ _id: req.params.id})
+    Thing.findOne({ _id: req.params.id})
     .then(thing => {
-        const filename = thing.imageUrl.split('/image/')[1];
-        fs.unlink(`/images/${filename}`, () => {
+        const filename = thing.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {
             Thing.deleteOne({ _id: req.params.id })
             .then(() => res.status(200).json({ message: 'Deleted!'}))
             .catch(error => res.status(400).json({ error }));
