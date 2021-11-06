@@ -17,7 +17,7 @@ exports.createThing = (req, res, next) => { //Création de l'objet
         usersDisliked: [],
     });
     thing.save()
-    .then(() => res.status(201).json({ message: "Sauce créée et enregistrées" }))
+    .then(() => res.status(201).json({ message: "Sauce créée et enregistrée" }))
     .catch(error => res.status(400).json({ error }));
 };
 
@@ -35,51 +35,44 @@ exports.getOneThing = (req, res, next) => { //Renvoie la sauce avec l’_id four
     });
 };
 
-exports.likesSauces = (req, res, next) => {
-    const like = req.body.like
-    const userId = req.body.userId
-    const thingId = req.params.id
+exports.likeSauces = (req, res, next) => {
 
-    switch (like) {
+    const userId = req.body.userId;
+    const like = req.body.like;
 
-        case 1 :
-            Thing.updateOne(
-            { _id: req.params.id },
-            { $push: { usersLiked: req.body.userId }, $inc: { likes: +1 }})
-            .then(() => res.status(200).json({ message: "Vous avez mis un like sur la sauce." }))
-            .catch((error) => res.status(400).json({ error }))
-        break;
+    Thing.findOne({ _id: req.params.id })
+        .then(thing => {
+            switch (like) {
+                case 1:
+                    Thing.updateOne({ _id: req.params.id }, { $inc: { likes: 1 }, $push: { usersLiked: userId } })
+                        .then(() => {res.status(200).json({ message: "Like !" });})
+                        .catch(error => res.status(400).json({ error }));
+                    break;
 
-        case 0 :
-            Thing.findOne({ _id: req.params.id }) 
-            .then((thing) => {
-                if(thing.usersLiked.includes(userId)) {
-                    Thing.updateOne(
-                    { _id: req.params.id },
-                    { $push: { usersLiked: req.body.userId }, $inc: { likes: -1 }})
-                    .then(() => res.status(200).json({ message: "Votre like a été supprimé" }))
-                    .catch((error) => res.status(400).json({ error }))
-                }
+                case 0:
+                    if (thing.usersLiked.includes(userId)) {
+                        Thing.updateOne({ _id: req.params.id }, { $inc: { likes: -1 }, $pull: { usersLiked: userId } })
+                            .then(() => {res.status(200).json({ message: "Like retiré !" });})
+                            .catch(error => res.status(400).json({ error }));
+                    } else if (thing.usersDisliked.includes(userId)) {
+                        Thing.updateOne({ _id: req.params.id }, { $inc: { dislikes: -1 }, $pull: { usersDisliked: userId } })
+                            .then(() => {res.status(200).json({ message: "Dislike retiré !" });})
+                            .catch(error => res.status(400).json({ error }));
+                    }
+                    break;
 
-                if(thing.usersDisliked.includes(userId)) {
-                    Thing.updateOne(
-                    { _id: req.params.id },
-                    { $push: { usersLiked: req.body.userId }, $inc: { dislikes: -1 }})
-                    .then(() => res.status(200).json({ message: "Votre dislike a été supprimé" }))
-                    .catch((error) => res.status(400).json({ error }))
-                }
-            })
-            .catch((error) => res.status(400).json({ error }))
-        break;
-
-        case -1 :
-            Thing.updateOne(
-            { _id: req.params.id },
-            { $push: { usersLiked: req.body.userId }, $inc: { dislikes: +1 }})
-            .then(() => res.status(200).json({ message: "Vous avez mis un dislike sur la sauce." }))
-            .catch((error) => res.status(400).json({ error }))
-        break;
-    }
+                case -1:
+                    Thing.updateOne({ _id: req.params.id }, { $inc: { dislikes: 1 }, $push: { usersDisliked: userId } })
+                        .then(() => {res.status(200).json({ message: "Dislike !" });})
+                        .catch(error => res.status(400).json({ error }));
+                    break;
+                default:
+                    console.log("error");
+            }
+        })
+        .catch(error => {
+            res.status(404).json({ error });
+        });
 };
 
 exports.modifyThing = (req, res, next) => { //Modification de l'objet
