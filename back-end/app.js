@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 const helmet = require('helmet');
+const fs = require('fs');
+const filesDir = 'images';
+
 
 const saucesRoute = require('./routes/sauces');
 const userRoutes = require('./routes/user');
@@ -30,5 +33,9 @@ app.use('/api/auth', userRoutes);
 app.use('/api/sauces', saucesRoute);
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+//Permet de créer le dossier images si il n'existe pas
+if (!fs.existsSync(filesDir)) {
+    fs.mkdirSync(filesDir);
+};
 
 module.exports = app;
